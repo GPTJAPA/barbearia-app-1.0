@@ -1,5 +1,7 @@
-// A nossa URL principal agora aponta para o servidor correto!
-const API_URL = "https://Fidelbarbearia.pythonanywhere.com/servicos";
+// ==========================================
+// CONFIGURAÇÃO DA API (Aponta diretamente para a rota /servicos)
+// ==========================================
+const API_URL = "https://fidelbarbearia.pythonanywhere.com/servicos";
 let servicoSelecionado = null;
 
 // ==========================================
@@ -13,8 +15,10 @@ function formatarDataBR(dataISO) {
 
 function bloquearDiasPassados() {
     const inputData = document.getElementById("data-escolhida");
-    const hoje = new Date().toISOString().split('T')[0];
-    inputData.setAttribute("min", hoje);
+    if (inputData) {
+        const hoje = new Date().toISOString().split('T')[0];
+        inputData.setAttribute("min", hoje);
+    }
 }
 
 function limparTelefone(telefone) {
@@ -31,6 +35,7 @@ async function carregarServicos() {
     const servicos = await resposta.json();
     const container = document.getElementById("lista-servicos");
 
+    if (!container) return;
     container.innerHTML = ""; 
 
     servicos.forEach((servico) => {
@@ -58,8 +63,10 @@ async function carregarServicos() {
     });
   } catch (erro) {
     console.error("Erro ao carregar serviços:", erro);
-    document.getElementById("lista-servicos").innerHTML =
-      '<p style="color: red;">Erro ao carregar os serviços. Verifique se o servidor Python está a rodar.</p>';
+    const container = document.getElementById("lista-servicos");
+    if (container) {
+        container.innerHTML = '<p style="color: red;">Erro ao carregar os serviços. Verifique a conexão com o servidor.</p>';
+    }
   }
 }
 
@@ -91,7 +98,7 @@ async function mostrarHorarios() {
 
   // Bloqueia finais de semana
   if (diaDaSemana === 0 || diaDaSemana === 6) {
-      alert("A barbearia não marca horario nos finais de semana! SOMENTE POR ORDEM DE CHEGADA! Caso queira marcar, escolha um dia de Segunda a Sexta-feira.");
+      alert("A barbearia não marca horário nos finais de semana! SOMENTE POR ORDEM DE CHEGADA! Caso queira marcar, escolha um dia de Segunda a Sexta-feira.");
       document.getElementById("data-escolhida").value = ""; 
       document.getElementById("grid-horarios").innerHTML = ""; 
       document.getElementById("titulo-horarios").style.display = "none";
@@ -103,7 +110,7 @@ async function mostrarHorarios() {
   grid.innerHTML = "<p>A verificar disponibilidade...</p>";
 
   try {
-    const resposta = await fetch(`https://Fidelbarbearia.pythonanywhere.com/horarios-ocupados?data=${data}`);
+    const resposta = await fetch(`https://fidelbarbearia.pythonanywhere.com/horarios-ocupados?data=${data}`);
     const horariosOcupados = await resposta.json();
 
     const todosHorarios = [
@@ -112,10 +119,9 @@ async function mostrarHorarios() {
       "15:30", "16:00", "17:30", "18:00", "18:30", "19:00", "19:30"
     ];
 
-    // Remove os horários que já estão ocupados no banco de dados
     let horariosDisponiveis = todosHorarios.filter(hora => !horariosOcupados.includes(hora));
 
-    // Verifica que horas são agora para limpar horários passados do dia de hoje
+    // Filtra horários já passados se a data selecionada for hoje
     const hoje = new Date();
     const ano = hoje.getFullYear();
     const mes = String(hoje.getMonth() + 1).padStart(2, '0');
@@ -169,14 +175,14 @@ async function confirmarAgendamento(hora, data) {
   };
 
   try {
-    const resposta = await fetch("https://Fidelbarbearia.pythonanywhere.com/agendar", {
+    const resposta = await fetch("https://fidelbarbearia.pythonanywhere.com/agendar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dadosDoAgendamento),
     });
 
     if (resposta.ok) {
-      const numeroBarbeiro = "5541995655320"; // Teu número de WhatsApp
+      const numeroBarbeiro = "5541995655320";
       const dataFormatada = formatarDataBR(data);
       const textoMensagem = `Olá! Gostaria de confirmar meu agendamento na Barbearia:\n\n*Nome:* ${nomeInput}\n*Serviço:* ${servicoSelecionado.nome}\n*Data:* ${dataFormatada}\n*Horário:* ${hora}\n*Valor:* R$ ${servicoSelecionado.preco.toFixed(2)}`;
       const urlWhatsapp = `https://wa.me/${numeroBarbeiro}?text=${encodeURIComponent(textoMensagem)}`;
@@ -226,7 +232,7 @@ async function fazerLogin() {
     const senhaInput = document.getElementById("login-senha").value;
 
     try {
-        const resposta = await fetch("https://Fidelbarbearia.pythonanywhere.com/login", {
+        const resposta = await fetch("https://fidelbarbearia.pythonanywhere.com/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ usuario: usuarioInput, senha: senhaInput })
@@ -241,7 +247,7 @@ async function fazerLogin() {
         }
     } catch (erro) {
         console.error("Erro ao fazer login:", erro);
-        alert("Erro de conexão com o servidor. O Python está ligado?");
+        alert("Erro de conexão com o servidor.");
     }
 }
 
@@ -268,8 +274,7 @@ async function cancelarAgendamentoCliente() {
     }
     
     try {
-        // Link devidamente corrigido para o cancelamento
-        const resposta = await fetch(`https://Fidelbarbearia.pythonanywhere.com/cancelar-telefone/${telefoneLimpo}`, {
+        const resposta = await fetch(`https://fidelbarbearia.pythonanywhere.com/cancelar-telefone/${telefoneLimpo}`, {
             method: 'DELETE'
         });
 
@@ -285,8 +290,6 @@ async function cancelarAgendamentoCliente() {
     }
 }
 
-// ==========================================
 // INICIA A PÁGINA
-// ==========================================
 carregarServicos();
 bloquearDiasPassados();
