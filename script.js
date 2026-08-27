@@ -1,4 +1,4 @@
-const API_URL = "https://Fidelbabearia.pythonanywhere.com";
+const API_URL = "https://Fidelbarbearia.pythonanywhere.com";
 let servicoSelecionado = null;
 
 // ==========================================
@@ -102,7 +102,7 @@ async function mostrarHorarios() {
   grid.innerHTML = "<p>A verificar disponibilidade...</p>";
 
   try {
-    const resposta = await fetch(`https://Fidelbabearia.pythonanywhere.com/horarios-ocupados?data=${data}`);
+    const resposta = await fetch(`https://Fidelbarbearia.pythonanywhere.com/horarios-ocupados?data=${data}`);
     const horariosOcupados = await resposta.json();
 
     const todosHorarios = [
@@ -171,7 +171,7 @@ async function confirmarAgendamento(hora, data) {
   };
 
   try {
-    const resposta = await fetch("https://Fidelbabearia.pythonanywhere.com/agendar", {
+    const resposta = await fetch("https://Fidelbarbearia.pythonanywhere.com/agendar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dadosDoAgendamento),
@@ -232,7 +232,7 @@ async function fazerLogin() {
     const senhaInput = document.getElementById("login-senha").value;
 
     try {
-        const resposta = await fetch("https://Fidelbabearia.pythonanywhere.com/login", {
+        const resposta = await fetch("https://Fidelbarbearia.pythonanywhere.com/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ usuario: usuarioInput, senha: senhaInput })
@@ -274,7 +274,7 @@ async function cancelarAgendamentoCliente() {
     }
     
     try {
-        const resposta = await fetch(`https://Fidelbabearia.pythonanywhere.com/cancelar-telefone/${telefoneLimpo}`, {
+        const resposta = await fetch(`https://Fidelbarbearia.pythonanywhere.com/cancelar-telefone/${telefoneLimpo}`, {
             method: 'DELETE'
         });
 

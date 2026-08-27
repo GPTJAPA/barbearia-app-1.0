@@ -23,7 +23,7 @@ function formatarDataBR(dataISO) {
 async function carregarAgenda() {
     const dataFiltro = document.getElementById("filtro-data") ? document.getElementById("filtro-data").value : "";
     
-    let url = "https://Fidelbabearia.pythonanywhere.com/agenda";
+    let url = "https://Fidelbarbearia.pythonanywhere.com/agenda";
     if (dataFiltro) {
         url = url + `?data=${dataFiltro}`;
     }
@@ -95,7 +95,7 @@ async function cancelar(id, telefone, cliente, data, hora) {
     if (!confirmar) return;
 
     try {
-        const resposta = await fetch(`https://Fidelbabearia.pythonanywhere.com/cancelar/${id}`, {
+        const resposta = await fetch(`https://Fidelbarbearia.pythonanywhere.com/cancelar/${id}`, {
             method: 'DELETE' 
         });
 
@@ -145,7 +145,7 @@ async function salvarEdicao() {
     const novaHora = document.getElementById("edit-hora").value;
 
     try {
-        const resposta = await fetch(`https://Fidelbabearia.pythonanywhere.com/editar/${id}`, {
+        const resposta = await fetch(`https://Fidelbarbearia.pythonanywhere.com/editar/${id}`, {
             method: 'PUT',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ data: novaData, hora: novaHora })
