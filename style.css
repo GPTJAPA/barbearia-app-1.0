@@ -1,0 +1,235 @@
+/* ==========================================
+   ESTILOS GERAIS DA PÁGINA
+   ========================================== */
+   
+
+body {
+  font-family: Arial, sans-serif;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-color: #000000; /* A cor de segurança que funcionou! */
+    
+    padding: 20px;
+    margin: 0;
+}
+
+/* Caixa principal que engloba tudo */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================
+   TIPOGRAFIA E TEXTOS
+   ========================================== */
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+h2,
+h3 {
+  margin-top: 25px;
+  color: #333;
+}
+
+/* Resumo do serviço escolhido */
+.resumo-caixa {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 4px;
+  border-left: 4px solid #27ae60;
+  font-size: 1.1em;
+}
+
+/* ==========================================
+   BOTÕES E INPUTS (FORMULÁRIO)
+   ========================================== */
+input {
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+/* ==========================================
+   BOTÕES MELHORADOS (VOLTAR E CANCELAR)
+   ========================================== */
+
+/* Novo visual do botão Voltar */
+.btn-voltar {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    color: #333;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: 0.3s; /* Cria um efeito suave ao passar o rato */
+}
+
+.btn-voltar:hover {
+    background-color: #e0e0e0;
+    border-color: #bbb;
+}
+
+/* Novo botão de Cancelar na Vitrine */
+.btn-cancelar-vitrine {
+    background-color: #f01a1a;
+    border: 2px solid #e74c3c;
+    color: #f3f1f1;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 12px 20px;
+    border-radius: 5px;
+    transition: 0.3s;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.btn-cancelar-vitrine:hover {
+    background-color: #e7e0df;
+    color: #f10a0a; /* O texto fica branco e o fundo vermelho ao tocar! */
+}
+/* ==========================================
+   ESTILOS PARA A TABELA (PAINEL ADMIN)
+   ========================================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+th {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Cria um efeito "zebrado" nas linhas da tabela para facilitar a leitura */
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+/* ==========================================
+   ESTILOS DO MODAL (ALERTA BONITO)
+   ========================================== */
+/* Fundo escuro atrás da janela */
+.modal-overlay {
+    position: fixed; /* Fica fixo no ecrã */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Preto com 60% de transparência */
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    z-index: 1000; /* Garante que fica por cima de tudo */
+}
+
+/* A caixinha branca principal */
+.modal-conteudo {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-conteudo h2 {
+    margin-top: 0;
+    color: #27ae60; /* Verde escuro */
+}
+
+/* O botão verde do WhatsApp */
+.btn-whatsapp {
+    background-color: #25D366; /* Verde oficial do WhatsApp */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-weight: bold;
+    transition: 0.2s;
+    width: 100%;
+}
+
+.btn-whatsapp:hover {
+    background-color: #128C7E; /* Fica um pouco mais escuro ao passar o rato */
+}
+/* ==========================================
+   LOGOS LATERAIS (ESQUERDA E DIREITA)
+   ========================================== */
+.logo-lateral {
+    position: fixed; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    
+    /* NOVO: Aumentámos a largura de 250px para 400px para ficar maior! */
+    width: 400px; 
+    
+    z-index: -1; 
+}
+
+/* Distância da imagem da esquerda */
+.logo-esquerda {
+    left: 5%; 
+}
+
+/* Distância da imagem da direita */
+.logo-direita {
+    right: 5%; 
+}
+
+/* ==========================================
+   REGRA PARA TELEMÓVEIS / CELULARES
+   ========================================== */
+/* Se a largura do ecrã for menor que 1100px (como tablets e telemóveis)... */
+@media (max-width: 1100px) {
+    .logo-lateral {
+        display: none; /* ...esconde as logos laterais para não encavalar o design! */
+    }
+}
+/* ==========================================
+   BOTÃO DE LOGIN (TOPO DIREITO)
+   ========================================== */
+.btn-login-topo {
+    position: absolute; /* Permite colocar o botão onde quisermos no ecrã */
+    top: 20px;          /* Distância do topo */
+    right: 20px;        /* Distância da direita */
+    background-color: rgba(0, 0, 0, 0.7); /* Fundo preto semi-transparente */
+    color: white;
+    border: 1px solid #fff;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    z-index: 100; /* Garante que fica por cima de tudo */
+    transition: 0.3s;
+}
+
+.btn-login-topo:hover {
+    background-color: white;
+    color: black;
+}

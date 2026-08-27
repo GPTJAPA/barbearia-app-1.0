@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbearia</title>
+    <!-- Ligamos o nosso ficheiro de estilos -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- ========================================== -->
+    <!-- BOTÃO DE LOGIN NO TOPO                     -->
+    <!-- ========================================== -->
+    <button onclick="abrirModalLogin()" class="btn-login-topo">Acesso Restrito</button>
+    <!-- ========================================== -->
+    <!-- IMAGENS LATERAIS (LOGOS)                   -->
+    <!-- ========================================== -->
+    <img src="imagens/logo.png" class="logo-lateral logo-esquerda" alt="Logo Barbearia Esquerda">
+    <img src="imagens/logo.png" class="logo-lateral logo-direita" alt="Logo Barbearia Direita">
+
+    <!-- Caixa principal que engloba o sistema -->
+    <div class="container">
+        
+        <!-- SEÇÃO 1: VITRINE DE SERVIÇOS (Aparece primeiro) -->
+        <div id="secao-vitrine">
+            <h1 style="text-align: center;">Nossos Serviços</h1>
+            <div id="lista-servicos">
+                <p>Carregando serviços...</p>
+            </div>
+            <!--  Botão chamativo para quem já tem marcação e quer cancelar -->
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="abrirModalCancelar()" class="btn-cancelar-vitrine">
+                    ❌ Já tem um horário e deseja Cancelar?
+                </button>
+            </div>
+        </div>
+
+        <!-- SEÇÃO 2: CALENDÁRIO E AGENDAMENTO (Começa escondida) -->
+        <div id="secao-agendamento" style="display: none;">
+            <button class="btn-voltar" onclick="voltarParaVitrine()">
+                ← Voltar
+            </button>
+
+            <h2 style="margin-top: 0;">Agendar Serviço</h2>
+            <p id="resumo-servico" class="resumo-caixa"></p>
+
+            <!-- Campos: Dados do Cliente -->
+            <h3>1. Seus Dados</h3>
+            <input type="text" id="nome-cliente" placeholder="Seu Nome Completo">
+            <input type="tel" id="telefone-cliente" placeholder="Seu WhatsApp">
+
+            <!-- O Calendário -->
+            <h3>2. Escolha a Data</h3>
+            <input type="date" id="data-escolhida" onchange="mostrarHorarios()">
+
+            <!-- Grid de Horários -->
+            <h3 id="titulo-horarios" style="display: none;">3. Escolha o Horário</h3>
+            <div id="grid-horarios" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ESTRUTURA DO MODAL (ALERTA BONITO)         -->
+    <!-- ========================================== -->
+    <div id="modal-sucesso" class="modal-overlay" style="display: none;">
+        <div class="modal-conteudo">
+            <h2>🎉 Agendamento Salvo!</h2>
+            <p>O seu horário foi reservado no nosso sistema com sucesso.</p>
+            <p>Para concluir, envie a mensagem automática no WhatsApp para o barbeiro.</p>
+            <!-- Botão que vai abrir o WhatsApp -->
+            <button id="btn-ir-whatsapp" class="btn-whatsapp">Confirmar no WhatsApp</button>
+        </div>
+    </div>
+<!-- ========================================== -->
+    <!-- MODAL DE LOGIN DO BARBEIRO                 -->
+    <!-- ========================================== -->
+    <div id="modal-login" class="modal-overlay" style="display: none;">
+        <div class="modal-conteudo">
+            <h2 style="color: #333;">Área do Barbeiro</h2>
+            <p style="margin-bottom: 20px;">Insira as suas credenciais para gerir a agenda.</p>
+            
+            <input type="text" id="login-usuario" placeholder="Usuário">
+            <input type="password" id="login-senha" placeholder="Senha">
+            
+            <!-- Botão preto para combinar com o design -->
+            <button onclick="fazerLogin()" class="btn-whatsapp" style="background-color: #000; color: #fff;">Entrar no Painel</button>
+            <button onclick="fecharModalLogin()" style="margin-top: 15px; background: none; border: none; color: #e74c3c; cursor: pointer; font-weight: bold;">Cancelar</button>
+        </div>
+    </div>
+  <!-- ========================================== -->
+    <!-- MODAL DE CANCELAMENTO AUTOMÁTICO           -->
+    <!-- ========================================== -->
+    <div id="modal-cancelar" class="modal-overlay" style="display: none;">
+        <div class="modal-conteudo">
+            <h2 style="color: #e74c3c;">Cancelar Agendamento</h2>
+            <p>Insira o seu número de WhatsApp exato para cancelar o horário.</p>
+            
+            <input type="tel" id="telefone-cancelar" placeholder="Seu WhatsApp (ex: 41XXXXXXXX)">
+            
+            <button onclick="cancelarAgendamentoCliente()" class="btn-whatsapp" style="background-color: #e74c3c;">Apagar Meu Horário</button>
+            <button onclick="fecharModalCancelar()" style="margin-top: 15px; background: none; border: none; color: #666; cursor: pointer; font-weight: bold;">Voltar</button>
+        </div>
+    </div>
+    <!-- Liga o JavaScript -->
+    <script src="script.js"></script>
+</body>
+
+</html>
