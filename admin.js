@@ -23,6 +23,7 @@ function formatarDataBR(dataISO) {
 async function carregarAgenda() {
     const dataFiltro = document.getElementById("filtro-data") ? document.getElementById("filtro-data").value : "";
     
+    // Link correto do PythonAnywhere
     let url = "https://Fidelbarbearia.pythonanywhere.com/agenda";
     if (dataFiltro) {
         url = url + `?data=${dataFiltro}`;
@@ -55,12 +56,10 @@ async function carregarAgenda() {
                 <td>${agendamento.hora}</td>
                 <td style="color: #27ae60; font-weight: bold;">R$ ${agendamento.valor.toFixed(2)}</td>
                 <td>
-                    <!-- Botão de Editar: Agora envia o Telefone e o Cliente para a memória -->
                     <button onclick="abrirModalEdicao(${agendamento.id}, '${agendamento.data}', '${agendamento.hora}', '${agendamento.telefone}', '${agendamento.cliente}')" 
                             style="background-color: #f1c40f; color: black; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-weight: bold; margin-right: 5px;">
                         Editar
                     </button>
-                    <!-- Botão de Cancelar -->
                     <button onclick="cancelar(${agendamento.id}, '${agendamento.telefone}', '${agendamento.cliente}', '${agendamento.data}', '${agendamento.hora}')" 
                             style="background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
                         Cancelar
@@ -127,7 +126,6 @@ function abrirModalEdicao(id, dataAtual, horaAtual, telefone, cliente) {
     document.getElementById("edit-data").value = dataAtual;
     document.getElementById("edit-hora").value = horaAtual;
     
-    // Atualiza a nossa memória (Variáveis Globais)
     telefoneClienteEditando = telefone;
     nomeClienteEditando = cliente;
     
@@ -164,10 +162,10 @@ async function salvarEdicao() {
             // 2. Truque para contornar o bloqueador de pop-ups do navegador
             const linkInvisivel = document.createElement("a");
             linkInvisivel.href = urlWhatsapp;
-            linkInvisivel.target = "_blank"; // Abre numa nova aba
-            document.body.appendChild(linkInvisivel); // Coloca na página
-            linkInvisivel.click(); // O JavaScript clica por ti
-            document.body.removeChild(linkInvisivel); // Apaga o link imediatamente
+            linkInvisivel.target = "_blank"; 
+            document.body.appendChild(linkInvisivel); 
+            linkInvisivel.click(); 
+            document.body.removeChild(linkInvisivel); 
             
             fecharModalEdicao();
             carregarAgenda(); 

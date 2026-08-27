@@ -1,4 +1,5 @@
-const API_URL = "https://Fidelbarbearia.pythonanywhere.com";
+// A nossa URL principal agora aponta para o servidor correto!
+const API_URL = "https://Fidelbarbearia.pythonanywhere.com/servicos";
 let servicoSelecionado = null;
 
 // ==========================================
@@ -58,7 +59,7 @@ async function carregarServicos() {
   } catch (erro) {
     console.error("Erro ao carregar serviços:", erro);
     document.getElementById("lista-servicos").innerHTML =
-      '<p style="color: red;">Erro ao carregar os serviços. Verifique se o Python está rodando.</p>';
+      '<p style="color: red;">Erro ao carregar os serviços. Verifique se o servidor Python está a rodar.</p>';
   }
 }
 
@@ -111,21 +112,18 @@ async function mostrarHorarios() {
       "15:30", "16:00", "17:30", "18:00", "18:30", "19:00", "19:30"
     ];
 
-    // 1. Remove os horários que já estão ocupados no banco de dados
+    // Remove os horários que já estão ocupados no banco de dados
     let horariosDisponiveis = todosHorarios.filter(hora => !horariosOcupados.includes(hora));
 
-    // NOVO: 2. Verifica que horas são agora para limpar horários passados do dia de hoje
+    // Verifica que horas são agora para limpar horários passados do dia de hoje
     const hoje = new Date();
-    // Monta a data de hoje no formato YYYY-MM-DD com os zeros à esquerda (ex: 2026-08-27)
     const ano = hoje.getFullYear();
     const mes = String(hoje.getMonth() + 1).padStart(2, '0');
     const dia = String(hoje.getDate()).padStart(2, '0');
     const dataHojeLocal = `${ano}-${mes}-${dia}`;
     
-    // Monta a hora atual no formato HH:MM (ex: 16:07)
     const horaAtualFormatada = String(hoje.getHours()).padStart(2, '0') + ":" + String(hoje.getMinutes()).padStart(2, '0');
 
-    // Se o cliente escolheu o dia de hoje, apagamos da lista todos os horários anteriores à hora atual
     if (data === dataHojeLocal) {
         horariosDisponiveis = horariosDisponiveis.filter(hora => hora > horaAtualFormatada);
     }
@@ -178,8 +176,7 @@ async function confirmarAgendamento(hora, data) {
     });
 
     if (resposta.ok) {
-      // Se deu tudo certo (código 201)
-      const numeroBarbeiro = "5541995655320";
+      const numeroBarbeiro = "5541995655320"; // Teu número de WhatsApp
       const dataFormatada = formatarDataBR(data);
       const textoMensagem = `Olá! Gostaria de confirmar meu agendamento na Barbearia:\n\n*Nome:* ${nomeInput}\n*Serviço:* ${servicoSelecionado.nome}\n*Data:* ${dataFormatada}\n*Horário:* ${hora}\n*Valor:* R$ ${servicoSelecionado.preco.toFixed(2)}`;
       const urlWhatsapp = `https://wa.me/${numeroBarbeiro}?text=${encodeURIComponent(textoMensagem)}`;
@@ -197,11 +194,8 @@ async function confirmarAgendamento(hora, data) {
       };
 
     } else {
-      // NOVO: Lê a mensagem de erro específica enviada pelo Python (código 400)
       const erroData = await resposta.json();
-      
       if (erroData.erro) {
-          // Mostra o nosso aviso de "Já possui um agendamento"
           alert(erroData.erro);
       } else {
           alert("Ocorreu um erro ao agendar. Tente novamente.");
@@ -274,6 +268,7 @@ async function cancelarAgendamentoCliente() {
     }
     
     try {
+        // Link devidamente corrigido para o cancelamento
         const resposta = await fetch(`https://Fidelbarbearia.pythonanywhere.com/cancelar-telefone/${telefoneLimpo}`, {
             method: 'DELETE'
         });
