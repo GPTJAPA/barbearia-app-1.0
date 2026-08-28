@@ -23,8 +23,8 @@ function formatarDataBR(dataISO) {
 async function carregarAgenda() {
     const dataFiltro = document.getElementById("filtro-data") ? document.getElementById("filtro-data").value : "";
     
-    // Link correto do PythonAnywhere
-    let url = "https://Fidelbarbearia.pythonanywhere.com/agenda";
+    // URL oficial do servidor PythonAnywhere
+    let url = "https://fidelbarbearia.pythonanywhere.com/agenda";
     if (dataFiltro) {
         url = url + `?data=${dataFiltro}`;
     }
@@ -39,29 +39,29 @@ async function carregarAgenda() {
         corpoTabela.innerHTML = ""; 
         
         if (agendamentos.length === 0) {
-            corpoTabela.innerHTML = `<tr><td colspan="8" style="text-align: center;">Nenhum agendamento para mostrar.</td></tr>`;
+            corpoTabela.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px;">Nenhum agendamento encontrado.</td></tr>`;
             return;
         }
         
+        // Constrói cada linha da tabela com os dados recebidos da API
         agendamentos.forEach(agendamento => {
             const dataAmigavel = formatarDataBR(agendamento.data);
             
             const linha = document.createElement("tr");
             linha.innerHTML = `
-                <td>${agendamento.id}</td>
+                <td><strong>#${agendamento.id}</strong></td>
                 <td><strong>${agendamento.cliente}</strong></td>
                 <td>${agendamento.telefone}</td>
                 <td>${agendamento.servico}</td>
                 <td>${dataAmigavel}</td>
                 <td>${agendamento.hora}</td>
                 <td style="color: #27ae60; font-weight: bold;">R$ ${agendamento.valor.toFixed(2)}</td>
-                <td>
-                    <button onclick="abrirModalEdicao(${agendamento.id}, '${agendamento.data}', '${agendamento.hora}', '${agendamento.telefone}', '${agendamento.cliente}')" 
-                            style="background-color: #f1c40f; color: black; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-weight: bold; margin-right: 5px;">
+                <td style="text-align: center;">
+                    <!-- Botões estilizados com as classes do style.css -->
+                    <button class="btn-acao-editar" onclick="abrirModalEdicao(${agendamento.id}, '${agendamento.data}', '${agendamento.hora}', '${agendamento.telefone}', '${agendamento.cliente}')">
                         Editar
                     </button>
-                    <button onclick="cancelar(${agendamento.id}, '${agendamento.telefone}', '${agendamento.cliente}', '${agendamento.data}', '${agendamento.hora}')" 
-                            style="background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                    <button class="btn-acao-cancelar" onclick="cancelar(${agendamento.id}, '${agendamento.telefone}', '${agendamento.cliente}', '${agendamento.data}', '${agendamento.hora}')">
                         Cancelar
                     </button>
                 </td>
@@ -73,13 +73,13 @@ async function carregarAgenda() {
         console.error("Erro ao carregar agenda:", erro);
         const corpoTabela = document.getElementById("corpo-tabela");
         if (corpoTabela) {
-            corpoTabela.innerHTML = `<tr><td colspan="8" style="text-align: center; color: red;">Erro ao carregar dados. O Python está ligado?</td></tr>`;
+            corpoTabela.innerHTML = `<tr><td colspan="8" style="text-align: center; color: red; padding: 20px;">Erro de conexão com o servidor. O Python está ligado?</td></tr>`;
         }
     }
 }
 
 function limparFiltro() {
-    if(document.getElementById("filtro-data")) {
+    if (document.getElementById("filtro-data")) {
         document.getElementById("filtro-data").value = "";
     }
     carregarAgenda();
@@ -94,7 +94,7 @@ async function cancelar(id, telefone, cliente, data, hora) {
     if (!confirmar) return;
 
     try {
-        const resposta = await fetch(`https://Fidelbarbearia.pythonanywhere.com/cancelar/${id}`, {
+        const resposta = await fetch(`https://fidelbarbearia.pythonanywhere.com/cancelar/${id}`, {
             method: 'DELETE' 
         });
 
@@ -120,7 +120,7 @@ async function cancelar(id, telefone, cliente, data, hora) {
 // 5. LÓGICA DE EDIÇÃO (ATUALIZAR) E WHATSAPP
 // ==========================================
 
-// Prepara a janela e guarda os dados originais
+// Prepara a janela modal e guarda os dados originais do cliente
 function abrirModalEdicao(id, dataAtual, horaAtual, telefone, cliente) {
     document.getElementById("edit-id").value = id;
     document.getElementById("edit-data").value = dataAtual;
@@ -136,14 +136,14 @@ function fecharModalEdicao() {
     document.getElementById("modal-editar").style.display = "none";
 }
 
-// Grava as alterações e avisa o cliente
+// Grava as alterações no servidor e envia mensagem no WhatsApp
 async function salvarEdicao() {
     const id = document.getElementById("edit-id").value;
     const novaData = document.getElementById("edit-data").value;
     const novaHora = document.getElementById("edit-hora").value;
 
     try {
-        const resposta = await fetch(`https://Fidelbarbearia.pythonanywhere.com/editar/${id}`, {
+        const resposta = await fetch(`https://fidelbarbearia.pythonanywhere.com/editar/${id}`, {
             method: 'PUT',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ data: novaData, hora: novaHora })
@@ -178,5 +178,5 @@ async function salvarEdicao() {
     }
 }
 
-// Inicializa a página
+// Inicializa a agenda ao carregar o script
 carregarAgenda();

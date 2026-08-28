@@ -1,38 +1,73 @@
 /* ==========================================
-   1. REGRAS GERAIS E RESET DE DADOS
+   1. RESET E CONFIGURAÇÕES DA PÁGINA
    ========================================== */
 * {
-    box-sizing: border-box; /* Garante que tamanhos contem com padding e bordas */
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
     background-color: #000000;
-    color: #333333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     padding: 20px 10px;
+    position: relative;
 }
 
 /* ==========================================
-   2. CONTENTOR PRINCIPAL COM MARCA D'ÁGUA
+   2. LOGOS LATERAIS (COMPUTADOR)
+   ========================================== */
+.logo-lateral {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 320px;
+    max-width: 22vw;
+    height: auto;
+    opacity: 0.9;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.logo-esquerda {
+    left: 30px;
+}
+
+.logo-direita {
+    right: 30px;
+}
+
+/* ==========================================
+   3. CARTÕES (CONTAINERS)
    ========================================== */
 .container {
     background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
     padding: 25px;
     width: 100%;
-    max-width: 650px;
-    position: relative; /* Necessário para posicionar a marca d'água */
-    overflow: hidden;   /* Evita que a imagem da marca d'água saia das bordas arredondadas */
+    max-width: 500px;
+    position: relative;
+    overflow: hidden;
+    z-index: 2;
 }
 
-/* Criação do efeito de Marca d'Água suave */
+/* Cartão exclusivo do Admin: Muito mais largo! */
+.container-admin {
+    max-width: 950px !important;
+}
+
+/* Marca d'água suave */
 .container::before {
     content: "";
     position: absolute;
@@ -40,62 +75,57 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('imagens/logo.png'); /* Caminho da imagem da tua logo */
+    background-image: url('imagens/logo.png');
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 70%; /* Ajusta o tamanho da logo no fundo */
-    opacity: 0.08;        /* Deixa a imagem meio apagada (marca d'água) */
-    pointer-events: none; /* Garante que os cliques atravessem para os botões */
+    background-size: 60%;
+    opacity: 0.12;
+    pointer-events: none;
     z-index: 0;
 }
 
-/* Garante que todo o conteúdo (textos, inputs, botões) fique por cima da marca d'água */
 .container * {
     position: relative;
     z-index: 1;
 }
 
 /* ==========================================
-   3. ELEMENTOS DE FORMULÁRIO E BOTÕES
+   4. FORMULÁRIOS E BOTÕES
    ========================================== */
+h1, h2, h3 {
+    margin-bottom: 10px;
+    color: #222;
+}
+
 input[type="text"],
 input[type="tel"],
 input[type="date"],
-input[type="password"],
-select {
-    width: 100%; 
+input[type="password"] {
+    width: 100%;
     padding: 12px;
-    margin-top: 8px;
+    margin-top: 5px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-size: 16px; /* Evita zoom automático no iOS */
-    background-color: rgba(255, 255, 255, 0.9); /* Leve fundo branco para leitura límpida */
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.95);
 }
 
-/* Botão Voltar */
 .btn-voltar {
     background-color: #f0f0f0;
     border: 1px solid #ccc;
     color: #333;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    padding: 10px 15px;
+    padding: 8px 12px;
     border-radius: 5px;
-    transition: 0.3s;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 15px;
 }
 
-.btn-voltar:hover {
-    background-color: #e0e0e0;
-}
-
-/* Botão Cancelar Vitrine */
 .btn-cancelar-vitrine {
-    background-color: #fff;
+    background-color: #f50000;
     border: 2px solid #e74c3c;
-    color: #e74c3c;
+    color: #f8f8f8;
     cursor: pointer;
     font-size: 15px;
     font-weight: bold;
@@ -111,77 +141,186 @@ select {
     color: #fff;
 }
 
-/* Botão Acesso Restrito */
 .btn-acesso-restrito {
     position: absolute;
-    top: -45px;
-    right: 0;
-    background-color: #222;
-    color: #fff;
-    border: 1px solid #444;
-    padding: 8px 14px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 13px;
-    z-index: 2;
-}
-
-/* ==========================================
-   4. TABELA RESPONSIVA (PAINEL ADMINISTRATIVO)
-   ========================================== */
-.tabela-container {
-    width: 100%;
-    overflow-x: auto;
-    margin-top: 15px;
-    border-radius: 5px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 500px;
-}
-
-th, td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-    font-size: 14px;
-}
-
-th {
+    top: 10px;
+    right: 10px;
     background-color: #000;
     color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 2;
+} /* <-- CORREÇÃO: A chaveta de fecho foi adicionada aqui! */
+
+/* ==========================================
+   5. FILTRO DO PAINEL ADMIN
+   ========================================== */
+.filtro-container {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.filtro-inputs {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.filtro-inputs input[type="date"] {
+    margin: 0;
+    padding: 8px 12px;
+    width: auto;
+    flex: 1;
+}
+
+.btn-limpar-filtro {
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    color: #495057;
+    padding: 9px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.btn-limpar-filtro:hover {
+    background-color: #dee2e6;
 }
 
 /* ==========================================
-   5. ADAPTAÇÕES PARA TELEMÓVEIS (RESPONSIVO)
+   6. TABELA PROFISSIONAL DO PAINEL ADMIN
    ========================================== */
+.tabela-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+.tabela-admin {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: left;
+    white-space: nowrap; /* Impede que textos como números de telefone ou datas quebrem linha */
+}
+
+.tabela-admin th {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    padding: 14px 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.tabela-admin td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e9ecef;
+    color: #333333;
+    vertical-align: middle;
+}
+
+/* Efeito zebra nas linhas para facilitar a leitura */
+.tabela-admin tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.tabela-admin tbody tr:hover {
+    background-color: #e9f5ff;
+}
+
+/* Botões da Tabela */
+.btn-acao-editar {
+    background-color: #f1c40f;
+    color: #000;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+    margin-right: 4px;
+}
+
+.btn-acao-cancelar {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* ==========================================
+   7. MODAIS (POPUPS)
+   ========================================== */
+.modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999 !important;
+    padding: 15px;
+}
+
+.modal-conteudo {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 30px 25px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    position: relative;
+    z-index: 100000;
+}
+
+.btn-whatsapp {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* ==========================================
+   8. ADAPTAÇÕES RESPONSIVAS
+   ========================================== */
+@media (max-width: 1150px) {
+    .logo-lateral {
+        display: none !important;
+    }
+}
+
 @media (max-width: 600px) {
     body {
-        padding: 10px 5px;
+        padding: 10px;
     }
 
     .container {
         padding: 15px;
-        margin-top: 40px;
-    }
-
-    .container::before {
-        background-size: 90%; /* Aumenta um pouco a marca d'água no ecrã do telemóvel */
-    }
-
-    .btn-acesso-restrito {
-        top: -40px;
-        right: 10px;
-    }
-
-    h1, h2 {
-        font-size: 1.3em;
-    }
-
-    th, td {
-        padding: 8px 5px;
-        font-size: 12px;
+        max-width: 100%;
     }
 }
