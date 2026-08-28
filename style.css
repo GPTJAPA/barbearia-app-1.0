@@ -62,12 +62,12 @@ body {
     z-index: 2;
 }
 
-/* Cartão exclusivo do Admin: Muito mais largo! */
+/* Cartão exclusivo do Admin */
 .container-admin {
     max-width: 950px !important;
 }
 
-/* Marca d'água suave no fundo do cartão */
+/* Marca d'água suave */
 .container::before {
     content: "";
     position: absolute;
@@ -90,7 +90,7 @@ body {
 }
 
 /* ==========================================
-   4. FORMULÁRIOS E BOTÕES
+   4. FORMULÁRIOS E BOTÕES (COMPUTADOR)
    ========================================== */
 h1, h2, h3 {
     margin-bottom: 10px;
@@ -142,6 +142,7 @@ input[type="password"] {
     color: #fff;
 }
 
+/* Botão Acesso Restrito em telas grandes (computador) */
 .btn-acesso-restrito {
     position: absolute;
     top: 10px;
@@ -149,15 +150,16 @@ input[type="password"] {
     background-color: #000;
     color: #fff;
     border: none;
-    padding: 6px 10px;
-    border-radius: 4px;
+    padding: 8px 12px;
+    border-radius: 5px;
     font-size: 12px;
+    font-weight: bold;
     cursor: pointer;
-    z-index: 2;
+    z-index: 10;
 }
 
 /* ==========================================
-   5. BOTÕES DE HORÁRIO DESIGN MODERNO
+   5. BOTÕES DE HORÁRIO
    ========================================== */
 #grid-horarios {
     display: grid !important;
@@ -335,7 +337,7 @@ input[type="password"] {
 }
 
 /* ==========================================
-   9. ADAPTAÇÕES RESPONSIVAS
+   9. ADAPTAÇÕES RESPONSIVAS (TELE MÓVEL)
    ========================================== */
 @media (max-width: 1150px) {
     .logo-lateral {
@@ -351,5 +353,17 @@ input[type="password"] {
     .container {
         padding: 15px;
         max-width: 100%;
+    }
+
+    /* CORREÇÃO PARA O TELEMÓVEL:
+       O botão passa a ficar no topo, ocupando toda a largura e empurrando o título para baixo */
+    .btn-acesso-restrito {
+        position: static !important; /* Desativa a posição absoluta do computador */
+        display: block;
+        width: 100%;
+        margin-bottom: 20px; /* Cria um espaço de 20px antes do título "Nossos Serviços" */
+        text-align: center;
+        padding: 10px;
+        font-size: 13px;
     }
 }
