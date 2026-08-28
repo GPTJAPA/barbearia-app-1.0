@@ -62,7 +62,7 @@ body {
     z-index: 2;
 }
 
-/* Cartão exclusivo do Admin */
+/* Cartão exclusivo do Admin em computadores */
 .container-admin {
     max-width: 950px !important;
 }
@@ -142,7 +142,6 @@ input[type="password"] {
     color: #fff;
 }
 
-/* Botão Acesso Restrito em telas grandes (computador) */
 .btn-acesso-restrito {
     position: absolute;
     top: 10px;
@@ -229,7 +228,7 @@ input[type="password"] {
 }
 
 /* ==========================================
-   7. TABELA PROFISSIONAL DO PAINEL ADMIN
+   7. TABELA PROFISSIONAL DO PAINEL ADMIN (COMPUTADOR)
    ========================================== */
 .tabela-wrapper {
     width: 100%;
@@ -244,7 +243,6 @@ input[type="password"] {
     border-collapse: collapse;
     font-size: 14px;
     text-align: left;
-    white-space: nowrap;
 }
 
 .tabela-admin th {
@@ -337,7 +335,7 @@ input[type="password"] {
 }
 
 /* ==========================================
-   9. ADAPTAÇÕES RESPONSIVAS (TELE MÓVEL)
+   9. ADAPTAÇÕES RESPONSIVAS (TELEMOVEL/TABLET)
    ========================================== */
 @media (max-width: 1150px) {
     .logo-lateral {
@@ -345,7 +343,8 @@ input[type="password"] {
     }
 }
 
-@media (max-width: 600px) {
+/* TRANSFORMA A TABELA EM CARTÕES NO TELEMÓVEL */
+@media (max-width: 768px) {
     body {
         padding: 10px;
     }
@@ -355,15 +354,59 @@ input[type="password"] {
         max-width: 100%;
     }
 
-    /* CORREÇÃO PARA O TELEMÓVEL:
-       O botão passa a ficar no topo, ocupando toda a largura e empurrando o título para baixo */
     .btn-acesso-restrito {
-        position: static !important; /* Desativa a posição absoluta do computador */
+        position: static !important;
         display: block;
         width: 100%;
-        margin-bottom: 20px; /* Cria um espaço de 20px antes do título "Nossos Serviços" */
+        margin-bottom: 20px;
         text-align: center;
         padding: 10px;
         font-size: 13px;
+    }
+
+    /* Esconde o cabeçalho preto da tabela no telemóvel */
+    .tabela-admin thead {
+        display: none;
+    }
+
+    /* Cada linha de agendamento vira um cartão individual */
+    .tabela-admin, .tabela-admin tbody, .tabela-admin tr, .tabela-admin td {
+        display: block;
+        width: 100%;
+    }
+
+    .tabela-admin tr {
+        background-color: #ffffff !important;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        padding: 12px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .tabela-admin td {
+        padding: 8px 5px;
+        border-bottom: 1px dashed #eee;
+        text-align: right;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+    }
+
+    .tabela-admin td:last-child {
+        border-bottom: none;
+        justify-content: flex-end;
+        margin-top: 8px;
+        padding-top: 10px;
+    }
+
+    /* Adiciona rótulos automáticos à esquerda de cada dado */
+    .tabela-admin td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #555;
+        text-align: left;
+        margin-right: 10px;
     }
 }

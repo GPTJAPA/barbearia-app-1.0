@@ -45,14 +45,14 @@ async function carregarAgenda() {
             
             const linha = document.createElement("tr");
             linha.innerHTML = `
-                <td><strong>#${agendamento.id}</strong></td>
-                <td><strong>${agendamento.cliente}</strong></td>
-                <td>${agendamento.telefone}</td>
-                <td>${agendamento.servico}</td>
-                <td>${dataAmigavel}</td>
-                <td>${agendamento.hora}</td>
-                <td style="color: #27ae60; font-weight: bold;">R$ ${agendamento.valor.toFixed(2)}</td>
-                <td style="text-align: center;">
+                <td data-label="ID:"><strong>#${agendamento.id}</strong></td>
+                <td data-label="Cliente:"><strong>${agendamento.cliente}</strong></td>
+                <td data-label="Telefone:">${agendamento.telefone}</td>
+                <td data-label="Serviço:">${agendamento.servico}</td>
+                <td data-label="Data:">${dataAmigavel}</td>
+                <td data-label="Hora:">${agendamento.hora}</td>
+                <td data-label="Valor:" style="color: #27ae60; font-weight: bold;">R$ ${agendamento.valor.toFixed(2)}</td>
+                <td data-label="Ações:">
                     <button class="btn-acao-editar" onclick="abrirModalEdicao(${agendamento.id}, '${agendamento.data}', '${agendamento.hora}', '${agendamento.telefone}', '${agendamento.cliente}')">
                         Editar
                     </button>
@@ -71,13 +71,6 @@ async function carregarAgenda() {
             corpoTabela.innerHTML = `<tr><td colspan="8" style="text-align: center; color: red; padding: 20px;">Erro ao carregar dados do servidor.</td></tr>`;
         }
     }
-}
-
-function limparFiltro() {
-    if (document.getElementById("filtro-data")) {
-        document.getElementById("filtro-data").value = "";
-    }
-    carregarAgenda();
 }
 
 // ==========================================
