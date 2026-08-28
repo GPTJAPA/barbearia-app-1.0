@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <!-- Meta tag essencial para garantir que o site se ajusta ao ecrã do telemóvel -->
+    <!-- Meta tag essencial para garantir a adaptação em ecrãs de telemóvel -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barbearia Fidel - Agendamento</title>
     <!-- Ligação ao ficheiro de estilos CSS -->
@@ -12,7 +12,7 @@
 
 <body>
 
-    <!-- LOGOS LATERAIS NO FUNDO PRETO (Exibidas apenas em computadores/monitores) -->
+    <!-- LOGOS LATERAIS NO FUNDO PRETO (Exibidas apenas em monitores/computadores) -->
     <img src="imagens/logo.png" class="logo-lateral logo-esquerda" alt="Logo Barbearia Esquerda">
     <img src="imagens/logo.png" class="logo-lateral logo-direita" alt="Logo Barbearia Direita">
 
@@ -53,13 +53,13 @@
             <input type="text" id="nome-cliente" placeholder="Seu Nome Completo">
             <input type="tel" id="telefone-cliente" placeholder="Seu WhatsApp (ex: 41999999999)">
 
-            <!-- Seleção da Data -->
+            <!-- Seleção da Data com abertura automática ao clicar -->
             <h3>2. Escolha a Data</h3>
-            <input type="date" id="data-escolhida" onchange="mostrarHorarios()">
+            <input type="date" id="data-escolhida" onclick="this.showPicker()" onchange="mostrarHorarios()">
 
             <!-- Grid com os Horários Disponíveis -->
             <h3 id="titulo-horarios" style="display: none;">3. Escolha o Horário</h3>
-            <div id="grid-horarios" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+            <div id="grid-horarios"></div>
         </div>
 
     </div>
@@ -72,7 +72,7 @@
             <h2>🎉 Agendamento Salvo!</h2>
             <p>O seu horário foi reservado no nosso sistema com sucesso.</p>
             <p>Para concluir, envie a mensagem automática no WhatsApp para o barbeiro.</p>
-            <button id="btn-ir-whatsapp" class="btn-whatsapp">Confirmar no WhatsApp</button>
+            <button id="btn-ir-whatsapp" class="btn-whatsapp" style="background-color: #25d366; color: white;">Confirmar no WhatsApp</button>
         </div>
     </div>
 
@@ -102,7 +102,7 @@
             
             <input type="tel" id="telefone-cancelar" placeholder="Seu WhatsApp (ex: 41XXXXXXXX)">
             
-            <button onclick="cancelarAgendamentoCliente()" class="btn-whatsapp" style="background-color: #e74c3c;">Apagar Meu Horário</button>
+            <button onclick="cancelarAgendamentoCliente()" class="btn-whatsapp" style="background-color: #e74c3c; color: white;">Apagar Meu Horário</button>
             <button onclick="fecharModalCancelar()" style="margin-top: 15px; background: none; border: none; color: #666; cursor: pointer; font-weight: bold;">Voltar</button>
         </div>
     </div>

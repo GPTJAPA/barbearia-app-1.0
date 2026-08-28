@@ -1,11 +1,11 @@
 // ==========================================
-// CONFIGURAÇÃO DA API (Aponta diretamente para a rota /servicos)
+// CONFIGURAÇÃO DA API (PythonAnywhere)
 // ==========================================
 const API_URL = "https://fidelbarbearia.pythonanywhere.com/servicos";
 let servicoSelecionado = null;
 
 // ==========================================
-// 1. FUNÇÕES DE UTILIDADE E CONFIGURAÇÃO
+// 1. FUNÇÕES DE UTILIDADE
 // ==========================================
 
 function formatarDataBR(dataISO) {
@@ -26,17 +26,24 @@ function limparTelefone(telefone) {
 }
 
 // ==========================================
-// 2. LÓGICA PRINCIPAL DO CLIENTE (AGENDAR)
+// 2. LÓGICA DA VITRINE E HORÁRIOS
 // ==========================================
 
 async function carregarServicos() {
+  const container = document.getElementById("lista-servicos");
+  if (!container) return;
+
   try {
     const resposta = await fetch(API_URL);
-    const servicos = await resposta.json();
-    const container = document.getElementById("lista-servicos");
+    if (!resposta.ok) throw new Error(`Erro: Status ${resposta.status}`);
 
-    if (!container) return;
+    const servicos = await resposta.json();
     container.innerHTML = ""; 
+
+    if (servicos.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #666;">Nenhum serviço disponível.</p>';
+        return;
+    }
 
     servicos.forEach((servico) => {
       const card = document.createElement("div");
@@ -54,19 +61,17 @@ async function carregarServicos() {
                 <div style="text-align: right;">
                     <strong style="color: #27ae60; font-size: 1.2em; display: block; margin-bottom: 8px;">R$ ${servico.preco.toFixed(2)}</strong>
                     <button onclick="selecionarServico(${servico.id}, '${servico.nome}', ${servico.preco})" 
-                            style="background-color: #000; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s;">
+                            style="background-color: #000; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">
                         Agendar
                     </button>
                 </div>
             `;
       container.appendChild(card);
     });
+
   } catch (erro) {
     console.error("Erro ao carregar serviços:", erro);
-    const container = document.getElementById("lista-servicos");
-    if (container) {
-        container.innerHTML = '<p style="color: red;">Erro ao carregar os serviços. Verifique a conexão com o servidor.</p>';
-    }
+    container.innerHTML = '<p style="color: red; text-align: center; font-weight: bold;">Erro ao carregar os serviços. Verifique a conexão.</p>';
   }
 }
 
@@ -96,9 +101,8 @@ async function mostrarHorarios() {
   const dataObjeto = new Date(partesData[0], partesData[1] - 1, partesData[2]);
   const diaDaSemana = dataObjeto.getDay(); 
 
-  // Bloqueia finais de semana
   if (diaDaSemana === 0 || diaDaSemana === 6) {
-      alert("A barbearia não marca horário nos finais de semana! SOMENTE POR ORDEM DE CHEGADA! Caso queira marcar, escolha um dia de Segunda a Sexta-feira.");
+      alert("A barbearia não marca horário nos fins de semana! SOMENTE POR ORDEM DE CHEGADA!");
       document.getElementById("data-escolhida").value = ""; 
       document.getElementById("grid-horarios").innerHTML = ""; 
       document.getElementById("titulo-horarios").style.display = "none";
@@ -107,21 +111,20 @@ async function mostrarHorarios() {
 
   document.getElementById("titulo-horarios").style.display = "block";
   const grid = document.getElementById("grid-horarios");
-  grid.innerHTML = "<p>A verificar disponibilidade...</p>";
+  grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>A verificar disponibilidade...</p>";
 
   try {
     const resposta = await fetch(`https://fidelbarbearia.pythonanywhere.com/horarios-ocupados?data=${data}`);
     const horariosOcupados = await resposta.json();
 
     const todosHorarios = [
-      "09:00", "09:30", "10:00","10:30", "11:00", "11:30", 
+      "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", 
       "12:00", "13:00", "13:30", "14:00", "14:30", "15:00",
       "15:30", "16:00", "17:30", "18:00", "18:30", "19:00", "19:30"
     ];
 
     let horariosDisponiveis = todosHorarios.filter(hora => !horariosOcupados.includes(hora));
 
-    // Filtra horários já passados se a data selecionada for hoje
     const hoje = new Date();
     const ano = hoje.getFullYear();
     const mes = String(hoje.getMonth() + 1).padStart(2, '0');
@@ -137,7 +140,7 @@ async function mostrarHorarios() {
     grid.innerHTML = ""; 
 
     if (horariosDisponiveis.length === 0) {
-      grid.innerHTML = "<p style='color: red;'>Agenda lotada (ou já não há mais horários disponíveis para hoje)!</p>";
+      grid.innerHTML = "<p style='grid-column: 1/-1; color: red; text-align: center; font-weight: bold;'>Agenda lotada para este dia!</p>";
       return;
     }
 
@@ -151,7 +154,7 @@ async function mostrarHorarios() {
 
   } catch (erro) {
     console.error("Erro ao carregar horários:", erro);
-    grid.innerHTML = "<p>Erro ao verificar a agenda.</p>";
+    grid.innerHTML = "<p style='grid-column: 1/-1; color: red; text-align: center;'>Erro ao verificar a agenda.</p>";
   }
 }
 
@@ -214,7 +217,7 @@ async function confirmarAgendamento(hora, data) {
 }
 
 // ==========================================
-// 3. LÓGICA DE LOGIN DO BARBEIRO
+// 3. LOGIN E CANCELAMENTO
 // ==========================================
 
 function abrirModalLogin() {
@@ -243,17 +246,13 @@ async function fazerLogin() {
         if (resultado.sucesso) {
             window.location.href = "admin.html";
         } else {
-            alert("Usuário ou senha incorretos! Tente novamente.");
+            alert("Usuário ou senha incorretos!");
         }
     } catch (erro) {
         console.error("Erro ao fazer login:", erro);
         alert("Erro de conexão com o servidor.");
     }
 }
-
-// ==========================================
-// 4. LÓGICA DE CANCELAMENTO AUTOMÁTICO
-// ==========================================
 
 function abrirModalCancelar() {
     document.getElementById("modal-cancelar").style.display = "flex";
@@ -279,10 +278,10 @@ async function cancelarAgendamentoCliente() {
         });
 
         if (resposta.ok) {
-            alert("Agendamento cancelado com sucesso! A vaga já está livre.");
+            alert("Agendamento cancelado com sucesso!");
             fecharModalCancelar();
         } else {
-            alert("Não encontrámos nenhuma marcação com esse número.");
+            alert("Nenhum agendamento encontrado para este número.");
         }
     } catch (erro) {
         console.error("Erro ao cancelar:", erro);
@@ -290,6 +289,6 @@ async function cancelarAgendamentoCliente() {
     }
 }
 
-// INICIA A PÁGINA
+// Inicializa a página
 carregarServicos();
 bloquearDiasPassados();

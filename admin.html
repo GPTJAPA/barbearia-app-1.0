@@ -10,25 +10,25 @@
 
 <body>
 
-    <!-- Logos laterais para ecrãs grandes -->
+    <!-- LOGOS LATERAIS NO FUNDO PRETO -->
     <img src="imagens/logo.png" class="logo-lateral logo-esquerda" alt="Logo Barbearia Esquerda">
     <img src="imagens/logo.png" class="logo-lateral logo-direita" alt="Logo Barbearia Direita">
 
-    <!-- Cartão com classe exclusiva container-admin para ser bem largo -->
+    <!-- Cartão com classe exclusiva container-admin -->
     <div class="container container-admin">
         
         <h1 style="margin-bottom: 20px; color: #111;">Agenda da Barbearia</h1>
 
-        <!-- Caixas de Filtro organizadas -->
+        <!-- Caixa de Filtro -->
         <div class="filtro-container">
             <label for="filtro-data"><strong>Filtrar por Dia:</strong></label>
             <div class="filtro-inputs">
-                <input type="date" id="filtro-data" onchange="carregarAgenda()">
+                <input type="date" id="filtro-data" onclick="this.showPicker()" onchange="carregarAgenda()">
                 <button onclick="limparFiltro()" class="btn-limpar-filtro">Ver Todos</button>
             </div>
         </div>
 
-        <!-- Tabela Encapsulada -->
+        <!-- Tabela Responsiva de Agendamentos -->
         <div class="tabela-wrapper">
             <table class="tabela-admin">
                 <thead>
@@ -53,14 +53,14 @@
 
     </div>
 
-    <!-- Modal de Edição -->
+    <!-- Modal de Edição de Horário -->
     <div id="modal-editar" class="modal-overlay" style="display: none;">
         <div class="modal-conteudo">
             <h3>Editar Agendamento</h3>
             <input type="hidden" id="edit-id">
             
             <label style="display: block; text-align: left; margin-top: 10px;">Nova Data:</label>
-            <input type="date" id="edit-data">
+            <input type="date" id="edit-data" onclick="this.showPicker()">
 
             <label style="display: block; text-align: left; margin-top: 10px;">Novo Horário:</label>
             <input type="time" id="edit-hora">

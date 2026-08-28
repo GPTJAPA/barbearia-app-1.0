@@ -67,7 +67,7 @@ body {
     max-width: 950px !important;
 }
 
-/* Marca d'água suave */
+/* Marca d'água suave no fundo do cartão */
 .container::before {
     content: "";
     position: absolute;
@@ -109,6 +109,7 @@ input[type="password"] {
     border-radius: 5px;
     font-size: 16px;
     background-color: rgba(255, 255, 255, 0.95);
+    cursor: pointer;
 }
 
 .btn-voltar {
@@ -153,10 +154,40 @@ input[type="password"] {
     font-size: 12px;
     cursor: pointer;
     z-index: 2;
-} /* <-- CORREÇÃO: A chaveta de fecho foi adicionada aqui! */
+}
 
 /* ==========================================
-   5. FILTRO DO PAINEL ADMIN
+   5. BOTÕES DE HORÁRIO DESIGN MODERNO
+   ========================================== */
+#grid-horarios {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.horario-btn {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border: 2px solid #1a1a1a;
+    border-radius: 8px;
+    padding: 12px 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.horario-btn:hover {
+    background-color: #27ae60;
+    border-color: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3);
+}
+
+/* ==========================================
+   6. FILTRO DO PAINEL ADMIN
    ========================================== */
 .filtro-container {
     background-color: #f8f9fa;
@@ -196,7 +227,7 @@ input[type="password"] {
 }
 
 /* ==========================================
-   6. TABELA PROFISSIONAL DO PAINEL ADMIN
+   7. TABELA PROFISSIONAL DO PAINEL ADMIN
    ========================================== */
 .tabela-wrapper {
     width: 100%;
@@ -211,7 +242,7 @@ input[type="password"] {
     border-collapse: collapse;
     font-size: 14px;
     text-align: left;
-    white-space: nowrap; /* Impede que textos como números de telefone ou datas quebrem linha */
+    white-space: nowrap;
 }
 
 .tabela-admin th {
@@ -231,7 +262,6 @@ input[type="password"] {
     vertical-align: middle;
 }
 
-/* Efeito zebra nas linhas para facilitar a leitura */
 .tabela-admin tbody tr:nth-child(even) {
     background-color: #f8f9fa;
 }
@@ -240,7 +270,6 @@ input[type="password"] {
     background-color: #e9f5ff;
 }
 
-/* Botões da Tabela */
 .btn-acao-editar {
     background-color: #f1c40f;
     color: #000;
@@ -265,7 +294,7 @@ input[type="password"] {
 }
 
 /* ==========================================
-   7. MODAIS (POPUPS)
+   8. MODAIS (POPUPS)
    ========================================== */
 .modal-overlay {
     position: fixed !important;
@@ -306,7 +335,7 @@ input[type="password"] {
 }
 
 /* ==========================================
-   8. ADAPTAÇÕES RESPONSIVAS
+   9. ADAPTAÇÕES RESPONSIVAS
    ========================================== */
 @media (max-width: 1150px) {
     .logo-lateral {

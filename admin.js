@@ -1,7 +1,6 @@
 // ==========================================
-// 1. VARIÁVEIS GLOBAIS (Memória do Sistema)
+// 1. VARIÁVEIS GLOBAIS
 // ==========================================
-// Guardam os dados do cliente que estamos a editar neste momento
 let telefoneClienteEditando = "";
 let nomeClienteEditando = "";
 
@@ -9,7 +8,6 @@ let nomeClienteEditando = "";
 // 2. FUNÇÕES DE UTILIDADE
 // ==========================================
 
-// Função para formatar a data (De: AAAA-MM-DD Para: DD/MM/AAAA)
 function formatarDataBR(dataISO) {
     if (!dataISO) return "";
     const partes = dataISO.split('-');
@@ -17,13 +15,12 @@ function formatarDataBR(dataISO) {
 }
 
 // ==========================================
-// 3. LÓGICA PRINCIPAL DA AGENDA (LER DADOS)
+// 3. LER E CARREGAR AGENDA DA API
 // ==========================================
 
 async function carregarAgenda() {
     const dataFiltro = document.getElementById("filtro-data") ? document.getElementById("filtro-data").value : "";
     
-    // URL oficial do servidor PythonAnywhere
     let url = "https://fidelbarbearia.pythonanywhere.com/agenda";
     if (dataFiltro) {
         url = url + `?data=${dataFiltro}`;
@@ -43,7 +40,6 @@ async function carregarAgenda() {
             return;
         }
         
-        // Constrói cada linha da tabela com os dados recebidos da API
         agendamentos.forEach(agendamento => {
             const dataAmigavel = formatarDataBR(agendamento.data);
             
@@ -57,7 +53,6 @@ async function carregarAgenda() {
                 <td>${agendamento.hora}</td>
                 <td style="color: #27ae60; font-weight: bold;">R$ ${agendamento.valor.toFixed(2)}</td>
                 <td style="text-align: center;">
-                    <!-- Botões estilizados com as classes do style.css -->
                     <button class="btn-acao-editar" onclick="abrirModalEdicao(${agendamento.id}, '${agendamento.data}', '${agendamento.hora}', '${agendamento.telefone}', '${agendamento.cliente}')">
                         Editar
                     </button>
@@ -73,7 +68,7 @@ async function carregarAgenda() {
         console.error("Erro ao carregar agenda:", erro);
         const corpoTabela = document.getElementById("corpo-tabela");
         if (corpoTabela) {
-            corpoTabela.innerHTML = `<tr><td colspan="8" style="text-align: center; color: red; padding: 20px;">Erro de conexão com o servidor. O Python está ligado?</td></tr>`;
+            corpoTabela.innerHTML = `<tr><td colspan="8" style="text-align: center; color: red; padding: 20px;">Erro ao carregar dados do servidor.</td></tr>`;
         }
     }
 }
@@ -86,7 +81,7 @@ function limparFiltro() {
 }
 
 // ==========================================
-// 4. LÓGICA DE CANCELAMENTO (APAGAR)
+// 4. CANCELAR AGENDAMENTO
 // ==========================================
 
 async function cancelar(id, telefone, cliente, data, hora) {
@@ -117,10 +112,9 @@ async function cancelar(id, telefone, cliente, data, hora) {
 }
 
 // ==========================================
-// 5. LÓGICA DE EDIÇÃO (ATUALIZAR) E WHATSAPP
+// 5. EDITAR AGENDAMENTO
 // ==========================================
 
-// Prepara a janela modal e guarda os dados originais do cliente
 function abrirModalEdicao(id, dataAtual, horaAtual, telefone, cliente) {
     document.getElementById("edit-id").value = id;
     document.getElementById("edit-data").value = dataAtual;
@@ -136,7 +130,6 @@ function fecharModalEdicao() {
     document.getElementById("modal-editar").style.display = "none";
 }
 
-// Grava as alterações no servidor e envia mensagem no WhatsApp
 async function salvarEdicao() {
     const id = document.getElementById("edit-id").value;
     const novaData = document.getElementById("edit-data").value;
@@ -152,14 +145,12 @@ async function salvarEdicao() {
         if (resposta.ok) {
             alert("Horário atualizado com sucesso no sistema!");
             
-            // 1. Prepara a mensagem de WhatsApp
             const dataFormatada = formatarDataBR(novaData);
             const textoMensagem = `Olá ${nomeClienteEditando}! O seu agendamento na barbearia foi remarcado para o dia ${dataFormatada} às ${novaHora}. Qualquer dúvida, estou à disposição!`;
             
             const numeroLimpo = telefoneClienteEditando.replace(/\D/g, '');
             const urlWhatsapp = `https://wa.me/55${numeroLimpo}?text=${encodeURIComponent(textoMensagem)}`;
             
-            // 2. Truque para contornar o bloqueador de pop-ups do navegador
             const linkInvisivel = document.createElement("a");
             linkInvisivel.href = urlWhatsapp;
             linkInvisivel.target = "_blank"; 
@@ -178,5 +169,5 @@ async function salvarEdicao() {
     }
 }
 
-// Inicializa a agenda ao carregar o script
+// Inicializa a agenda
 carregarAgenda();
