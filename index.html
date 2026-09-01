@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <!-- Meta tag essencial para garantir a adaptação em ecrãs de telemóvel -->
+    <!-- Meta tag para adaptação correta em ecrãs de telemóvel -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barbearia Fidel - Agendamento</title>
-    <!-- Ligação ao ficheiro de estilos CSS -->
+    <!-- Folha de Estilos CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -16,13 +16,13 @@
     <img src="imagens/logo.png" class="logo-lateral logo-esquerda" alt="Logo Barbearia Esquerda">
     <img src="imagens/logo.png" class="logo-lateral logo-direita" alt="Logo Barbearia Direita">
 
-    <!-- Caixa principal que engloba todo o sistema -->
+    <!-- Caixa principal do sistema -->
     <div class="container">
         
-        <!-- BOTÃO DE LOGIN (Posicionado no canto do cartão) -->
+        <!-- BOTÃO DE LOGIN PARA O BARBEIRO -->
         <button onclick="abrirModalLogin()" class="btn-acesso-restrito">Acesso Restrito</button>
 
-        <!-- SEÇÃO 1: VITRINE DE SERVIÇOS (Aparece primeiro) -->
+        <!-- SEÇÃO 1: VITRINE DE SERVIÇOS -->
         <div id="secao-vitrine">
             <h1 style="text-align: center;">Nossos Serviços</h1>
             
@@ -53,7 +53,7 @@
             <input type="text" id="nome-cliente" placeholder="Seu Nome Completo">
             <input type="tel" id="telefone-cliente" placeholder="Seu WhatsApp (ex: 41999999999)">
 
-            <!-- Seleção da Data com abertura automática ao clicar -->
+            <!-- Seleção da Data com abertura automática do calendário ao clicar -->
             <h3>2. Escolha a Data</h3>
             <input type="date" id="data-escolhida" onclick="this.showPicker()" onchange="mostrarHorarios()">
 
@@ -107,7 +107,7 @@
         </div>
     </div>
 
-    <!-- Ligação do ficheiro JavaScript principal -->
+    <!-- Ligação do JavaScript principal -->
     <script src="script.js"></script>
 </body>
 

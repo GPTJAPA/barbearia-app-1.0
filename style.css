@@ -62,7 +62,6 @@ body {
     z-index: 2;
 }
 
-/* Cartão exclusivo do Admin em computadores */
 .container-admin {
     max-width: 950px !important;
 }
@@ -90,7 +89,7 @@ body {
 }
 
 /* ==========================================
-   4. FORMULÁRIOS E BOTÕES (COMPUTADOR)
+   4. FORMULÁRIOS E BOTÕES DE NAVEGAÇÃO
    ========================================== */
 h1, h2, h3 {
     margin-bottom: 10px;
@@ -155,6 +154,26 @@ input[type="password"] {
     font-weight: bold;
     cursor: pointer;
     z-index: 10;
+}
+
+.btn-sair-admin {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: #e74c3c;
+    color: #ffffff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    z-index: 10;
+}
+
+.btn-sair-admin:hover {
+    background-color: #c0392b;
 }
 
 /* ==========================================
@@ -228,7 +247,7 @@ input[type="password"] {
 }
 
 /* ==========================================
-   7. TABELA PROFISSIONAL DO PAINEL ADMIN (COMPUTADOR)
+   7. TABELA DO PAINEL ADMIN (DESKTOP)
    ========================================== */
 .tabela-wrapper {
     width: 100%;
@@ -335,7 +354,7 @@ input[type="password"] {
 }
 
 /* ==========================================
-   9. ADAPTAÇÕES RESPONSIVAS (TELEMOVEL/TABLET)
+   9. ADAPTAÇÕES RESPONSIVAS (MOBILE)
    ========================================== */
 @media (max-width: 1150px) {
     .logo-lateral {
@@ -343,7 +362,6 @@ input[type="password"] {
     }
 }
 
-/* TRANSFORMA A TABELA EM CARTÕES NO TELEMÓVEL */
 @media (max-width: 768px) {
     body {
         padding: 10px;
@@ -364,12 +382,19 @@ input[type="password"] {
         font-size: 13px;
     }
 
-    /* Esconde o cabeçalho preto da tabela no telemóvel */
+    .btn-sair-admin {
+        position: static !important;
+        display: block;
+        width: 100%;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    /* Esconde o cabeçalho da tabela e transforma as linhas em cartões verticais */
     .tabela-admin thead {
         display: none;
     }
 
-    /* Cada linha de agendamento vira um cartão individual */
     .tabela-admin, .tabela-admin tbody, .tabela-admin tr, .tabela-admin td {
         display: block;
         width: 100%;
@@ -401,7 +426,6 @@ input[type="password"] {
         padding-top: 10px;
     }
 
-    /* Adiciona rótulos automáticos à esquerda de cada dado */
     .tabela-admin td::before {
         content: attr(data-label);
         font-weight: bold;
