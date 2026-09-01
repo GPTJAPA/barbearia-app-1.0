@@ -1,153 +1,340 @@
-let telefoneClienteEditando = "";
-let nomeClienteEditando = "";
+// ==========================================
+// CONFIGURAÇÃO DA API (PythonAnywhere)
+// ==========================================
+const API_URL = "https://fidelbarbearia.pythonanywhere.com/servicos";
+let servicoSelecionado = null;
+
+// ==========================================
+// 1. FUNÇÕES DE UTILIDADE
+// ==========================================
 
 function formatarDataBR(dataISO) {
-    if (!dataISO) return "";
     const partes = dataISO.split('-');
     return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
-async function carregarAgenda() {
-    const dataFiltro = document.getElementById("filtro-data") ? document.getElementById("filtro-data").value : "";
-    
-    let url = "https://fidelbarbearia.pythonanywhere.com/agenda";
-    if (dataFiltro) {
-        url = url + `?data=${dataFiltro}`;
+function bloquearDiasPassados() {
+    const inputData = document.getElementById("data-escolhida");
+    if (inputData) {
+        const hoje = new Date().toISOString().split('T')[0];
+        inputData.setAttribute("min", hoje);
     }
+}
+
+function limparTelefone(telefone) {
+    return telefone.replace(/\D/g, ''); 
+}
+
+// ==========================================
+// LÓGICA OTIMIZADA DE CARREGAMENTO DE SERVIÇOS
+// ==========================================
+async function carregarServicos() {
+  const container = document.getElementById("lista-servicos");
+  if (!container) return;
+
+  // 1. Tenta carregar do cache local para exibição INSTANTÂNEA
+  const servicosSalvos = localStorage.getItem("servicos_barbearia");
+  if (servicosSalvos) {
+      renderizarListaServicos(JSON.parse(servicosSalvos));
+  } else {
+      // Exibe a animação de carregamento enquanto o servidor "acorda"
+      container.innerHTML = `
+          <div style="text-align: center; padding: 20px;">
+              <div class="spinner-carregando"></div>
+              <p style="color: #666; font-size: 14px; margin-top: 10px;">A conectar ao servidor...</p>
+          </div>
+      `;
+  }
+
+  try {
+    // 2. Busca os dados atualizados no PythonAnywhere
+    const controlador = new AbortController();
+    const timeoutId = setTimeout(() => controlador.abort(), 12000); // 12 segundos de limite
+
+    const resposta = await fetch(API_URL, { signal: controlador.signal });
+    clearTimeout(timeoutId);
+
+    if (!resposta.ok) throw new Error(`Status ${resposta.status}`);
+
+    const servicos = await resposta.json();
+
+    // 3. Guarda no cache local para as próximas visitas
+    localStorage.setItem("servicos_barbearia", JSON.stringify(servicos));
+
+    // 4. Renderiza a lista atualizada
+    renderizarListaServicos(servicos);
+
+  } catch (erro) {
+    console.error("Erro ao carregar serviços:", erro);
+
+    // Se não tiver nada no cache e der erro/timeout
+    if (!localStorage.getItem("servicos_barbearia")) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 15px;">
+                <p style="color: #e74c3c; font-weight: bold; margin-bottom: 10px;">
+                    O servidor está a demorar a responder.
+                </p>
+                <button onclick="carregarServicos()" style="background-color: #000; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                    🔄 Tentar Novamente
+                </button>
+            </div>
+        `;
+    }
+  }
+}
+
+// Função auxiliar para desenhar a lista no ecrã
+function renderizarListaServicos(servicos) {
+  const container = document.getElementById("lista-servicos");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (servicos.length === 0) {
+      container.innerHTML = '<p style="text-align: center; color: #666;">Nenhum serviço disponível.</p>';
+      return;
+  }
+
+  servicos.forEach((servico) => {
+    const card = document.createElement("div");
+    card.style.borderBottom = "1px solid #eee";
+    card.style.padding = "15px 0";
+    card.style.display = "flex";
+    card.style.justifyContent = "space-between";
+    card.style.alignItems = "center";
+
+    card.innerHTML = `
+        <div>
+            <h3 style="margin: 0; color: #333;">${servico.nome}</h3>
+            <small style="color: #666;">Duração: ${servico.duracao_minutos} min</small>
+        </div>
+        <div style="text-align: right;">
+            <strong style="color: #27ae60; font-size: 1.2em; display: block; margin-bottom: 8px;">R$ ${servico.preco.toFixed(2)}</strong>
+            <button onclick="selecionarServico(${servico.id}, '${servico.nome}', ${servico.preco})" 
+                    style="background-color: #000; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                Agendar
+            </button>
+        </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function selecionarServico(id, nome, preco) {
+  servicoSelecionado = { id, nome, preco };
+  document.getElementById("resumo-servico").innerHTML = `
+        <strong>${nome}</strong><br>
+        <span style="color: #666;">Valor: R$ ${preco.toFixed(2)}</span>
+    `;
+  document.getElementById("secao-vitrine").style.display = "none";
+  document.getElementById("secao-agendamento").style.display = "block";
+}
+
+function voltarParaVitrine() {
+  document.getElementById("secao-agendamento").style.display = "none";
+  document.getElementById("secao-vitrine").style.display = "block";
+  document.getElementById("data-escolhida").value = "";
+  document.getElementById("grid-horarios").innerHTML = "";
+  document.getElementById("titulo-horarios").style.display = "none";
+}
+
+async function mostrarHorarios() {
+  const data = document.getElementById("data-escolhida").value;
+  if (!data) return;
+
+  const partesData = data.split('-'); 
+  const dataObjeto = new Date(partesData[0], partesData[1] - 1, partesData[2]);
+  const diaDaSemana = dataObjeto.getDay(); 
+
+  if (diaDaSemana === 0 || diaDaSemana === 6) {
+      alert("A barbearia não marca horário nos fins de semana! SOMENTE POR ORDEM DE CHEGADA!");
+      document.getElementById("data-escolhida").value = ""; 
+      document.getElementById("grid-horarios").innerHTML = ""; 
+      document.getElementById("titulo-horarios").style.display = "none";
+      return; 
+  }
+
+  document.getElementById("titulo-horarios").style.display = "block";
+  const grid = document.getElementById("grid-horarios");
+  grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>A verificar disponibilidade...</p>";
+
+  try {
+    const resposta = await fetch(`https://fidelbarbearia.pythonanywhere.com/horarios-ocupados?data=${data}`);
+    const horariosOcupados = await resposta.json();
+
+    const todosHorarios = [
+      "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", 
+      "12:00", "13:00", "13:30", "14:00", "14:30", "15:00",
+      "15:30", "16:00", "16:30", "17:00","17:30", "18:00", 
+      "18:30", "19:00","19:30"
+    ];
+
+    let horariosDisponiveis = todosHorarios.filter(hora => !horariosOcupados.includes(hora));
+
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    const dia = String(hoje.getDate()).padStart(2, '0');
+    const dataHojeLocal = `${ano}-${mes}-${dia}`;
+    
+    const horaAtualFormatada = String(hoje.getHours()).padStart(2, '0') + ":" + String(hoje.getMinutes()).padStart(2, '0');
+
+    if (data === dataHojeLocal) {
+        horariosDisponiveis = horariosDisponiveis.filter(hora => hora > horaAtualFormatada);
+    }
+
+    grid.innerHTML = ""; 
+
+    if (horariosDisponiveis.length === 0) {
+      grid.innerHTML = "<p style='grid-column: 1/-1; color: red; text-align: center; font-weight: bold;'>Agenda lotada para este dia!</p>";
+      return;
+    }
+
+    horariosDisponiveis.forEach((hora) => {
+      const btn = document.createElement("button");
+      btn.className = "horario-btn";
+      btn.innerText = hora;
+      btn.onclick = () => confirmarAgendamento(hora, data);
+      grid.appendChild(btn);
+    });
+
+  } catch (erro) {
+    console.error("Erro ao carregar horários:", erro);
+    grid.innerHTML = "<p style='grid-column: 1/-1; color: red; text-align: center;'>Erro ao verificar a agenda.</p>";
+  }
+}
+
+async function confirmarAgendamento(hora, data) {
+  const nomeInput = document.getElementById("nome-cliente").value;
+  const telefoneCru = document.getElementById("telefone-cliente").value;
+  const telefoneLimpo = limparTelefone(telefoneCru);
+
+  if (!nomeInput || !telefoneLimpo) {
+    alert("Por favor, preencha seu nome e WhatsApp antes de escolher o horário!");
+    return;
+  }
+
+  const dadosDoAgendamento = {
+    cliente: nomeInput,
+    telefone: telefoneLimpo, 
+    servico: servicoSelecionado.nome,
+    data: data, 
+    hora: hora,
+    valor: servicoSelecionado.preco,
+  };
+
+  try {
+    const resposta = await fetch("https://fidelbarbearia.pythonanywhere.com/agendar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dadosDoAgendamento),
+    });
+
+    if (resposta.ok) {
+      const numeroBarbeiro = "5541995655320";
+      const dataFormatada = formatarDataBR(data);
+      const textoMensagem = `Olá! Gostaria de confirmar meu agendamento na Barbearia:\n\n*Nome:* ${nomeInput}\n*Serviço:* ${servicoSelecionado.nome}\n*Data:* ${dataFormatada}\n*Horário:* ${hora}\n*Valor:* R$ ${servicoSelecionado.preco.toFixed(2)}`;
+      const urlWhatsapp = `https://wa.me/${numeroBarbeiro}?text=${encodeURIComponent(textoMensagem)}`;
+
+      const modal = document.getElementById("modal-sucesso");
+      modal.style.display = "flex";
+
+      const btnWhatsapp = document.getElementById("btn-ir-whatsapp");
+      btnWhatsapp.onclick = function() {
+          window.open(urlWhatsapp, "_blank");
+          modal.style.display = "none";
+          document.getElementById("nome-cliente").value = "";
+          document.getElementById("telefone-cliente").value = "";
+          voltarParaVitrine();
+      };
+
+    } else {
+      const erroData = await resposta.json();
+      if (erroData.erro) {
+          alert(erroData.erro);
+      } else {
+          alert("Ocorreu um erro ao agendar. Tente novamente.");
+      }
+    }
+  } catch (erro) {
+    console.error("Erro ao enviar dados para a API:", erro);
+    alert("Erro de conexão com o servidor.");
+  }
+}
+
+// ==========================================
+// 3. LOGIN E CANCELAMENTO
+// ==========================================
+
+function abrirModalLogin() {
+    document.getElementById("modal-login").style.display = "flex";
+}
+
+function fecharModalLogin() {
+    document.getElementById("modal-login").style.display = "none";
+    document.getElementById("login-usuario").value = ""; 
+    document.getElementById("login-senha").value = "";
+}
+
+async function fazerLogin() {
+    const usuarioInput = document.getElementById("login-usuario").value;
+    const senhaInput = document.getElementById("login-senha").value;
 
     try {
-        const resposta = await fetch(url);
-        const agendamentos = await resposta.json();
-        
-        const corpoTabela = document.getElementById("corpo-tabela");
-        if (!corpoTabela) return;
-        
-        corpoTabela.innerHTML = ""; 
-        
-        if (agendamentos.length === 0) {
-            corpoTabela.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px;">Nenhum agendamento encontrado.</td></tr>`;
-            return;
-        }
-        
-        agendamentos.forEach(agendamento => {
-            const dataAmigavel = formatarDataBR(agendamento.data);
-            
-            const linha = document.createElement("tr");
-            linha.innerHTML = `
-                <td data-label="ID:"><strong>#${agendamento.id}</strong></td>
-                <td data-label="Cliente:"><strong>${agendamento.cliente}</strong></td>
-                <td data-label="Telefone:">${agendamento.telefone}</td>
-                <td data-label="Serviço:">${agendamento.servico}</td>
-                <td data-label="Data:">${dataAmigavel}</td>
-                <td data-label="Hora:">${agendamento.hora}</td>
-                <td data-label="Valor:" style="color: #27ae60; font-weight: bold;">R$ ${agendamento.valor.toFixed(2)}</td>
-                <td data-label="Ações:">
-                    <button class="btn-acao-editar" onclick="abrirModalEdicao(${agendamento.id}, '${agendamento.data}', '${agendamento.hora}', '${agendamento.telefone}', '${agendamento.cliente}')">
-                        Editar
-                    </button>
-                    <button class="btn-acao-cancelar" onclick="cancelar(${agendamento.id}, '${agendamento.telefone}', '${agendamento.cliente}', '${agendamento.data}', '${agendamento.hora}')">
-                        Cancelar
-                    </button>
-                </td>
-            `;
-            corpoTabela.appendChild(linha);
-        });
-        
-    } catch (erro) {
-        console.error("Erro ao carregar agenda:", erro);
-        const corpoTabela = document.getElementById("corpo-tabela");
-        if (corpoTabela) {
-            corpoTabela.innerHTML = `<tr><td colspan="8" style="text-align: center; color: red; padding: 20px;">Erro ao carregar dados do servidor.</td></tr>`;
-        }
-    }
-}
-
-function limparFiltro() {
-    if (document.getElementById("filtro-data")) {
-        document.getElementById("filtro-data").value = "";
-    }
-    carregarAgenda();
-}
-
-async function cancelar(id, telefone, cliente, data, hora) {
-    const confirmar = confirm(`Tem certeza que deseja cancelar o horário de ${cliente}?`);
-    if (!confirmar) return;
-
-    try {
-        const resposta = await fetch(`https://fidelbarbearia.pythonanywhere.com/cancelar/${id}`, {
-            method: 'DELETE' 
-        });
-
-        if (resposta.ok) {
-            alert("Agendamento apagado do sistema!");
-            
-            const dataCancelamento = formatarDataBR(data);
-            const texto = `Olá ${cliente}! Infelizmente o seu agendamento para o dia ${dataCancelamento} às ${hora} precisou ser cancelado. Por favor, entre em contato para remarcarmos!`;
-            
-            const numeroLimpo = telefone.replace(/\D/g, ''); 
-            const urlWhatsapp = `https://wa.me/55${numeroLimpo}?text=${encodeURIComponent(texto)}`;
-            
-            window.open(urlWhatsapp, "_blank");
-            carregarAgenda();
-        }
-    } catch (erro) {
-        console.error("Erro ao cancelar:", erro);
-        alert("Erro ao tentar cancelar.");
-    }
-}
-
-function abrirModalEdicao(id, dataAtual, horaAtual, telefone, cliente) {
-    document.getElementById("edit-id").value = id;
-    document.getElementById("edit-data").value = dataAtual;
-    document.getElementById("edit-hora").value = horaAtual;
-    
-    telefoneClienteEditando = telefone;
-    nomeClienteEditando = cliente;
-    
-    document.getElementById("modal-editar").style.display = "flex";
-}
-
-function fecharModalEdicao() {
-    document.getElementById("modal-editar").style.display = "none";
-}
-
-async function salvarEdicao() {
-    const id = document.getElementById("edit-id").value;
-    const novaData = document.getElementById("edit-data").value;
-    const novaHora = document.getElementById("edit-hora").value;
-
-    try {
-        const resposta = await fetch(`https://fidelbarbearia.pythonanywhere.com/editar/${id}`, {
-            method: 'PUT',
+        const resposta = await fetch("https://fidelbarbearia.pythonanywhere.com/login", {
+            method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ data: novaData, hora: novaHora })
+            body: JSON.stringify({ usuario: usuarioInput, senha: senhaInput })
         });
 
-        if (resposta.ok) {
-            alert("Horário atualizado com sucesso no sistema!");
-            
-            const dataFormatada = formatarDataBR(novaData);
-            const textoMensagem = `Olá ${nomeClienteEditando}! O seu agendamento na barbearia foi remarcado para o dia ${dataFormatada} às ${novaHora}. Qualquer dúvida, estou à disposição!`;
-            
-            const numeroLimpo = telefoneClienteEditando.replace(/\D/g, '');
-            const urlWhatsapp = `https://wa.me/55${numeroLimpo}?text=${encodeURIComponent(textoMensagem)}`;
-            
-            const linkInvisivel = document.createElement("a");
-            linkInvisivel.href = urlWhatsapp;
-            linkInvisivel.target = "_blank"; 
-            document.body.appendChild(linkInvisivel); 
-            linkInvisivel.click(); 
-            document.body.removeChild(linkInvisivel); 
-            
-            fecharModalEdicao();
-            carregarAgenda(); 
+        const resultado = await resposta.json();
+
+        if (resultado.sucesso) {
+            window.location.href = "admin.html";
         } else {
-            alert("Erro ao atualizar o agendamento.");
+            alert("Usuário ou senha incorretos!");
         }
     } catch (erro) {
-        console.error("Erro ao editar:", erro);
+        console.error("Erro ao fazer login:", erro);
         alert("Erro de conexão com o servidor.");
     }
 }
 
-carregarAgenda();
+function abrirModalCancelar() {
+    document.getElementById("modal-cancelar").style.display = "flex";
+}
+
+function fecharModalCancelar() {
+    document.getElementById("modal-cancelar").style.display = "none";
+    document.getElementById("telefone-cancelar").value = ""; 
+}
+
+async function cancelarAgendamentoCliente() {
+    const telefoneCru = document.getElementById("telefone-cancelar").value;
+    const telefoneLimpo = limparTelefone(telefoneCru);
+    
+    if (!telefoneLimpo) {
+        alert("Por favor, preencha o seu WhatsApp para cancelar.");
+        return;
+    }
+    
+    try {
+        const resposta = await fetch(`https://fidelbarbearia.pythonanywhere.com/cancelar-telefone/${telefoneLimpo}`, {
+            method: 'DELETE'
+        });
+
+        if (resposta.ok) {
+            alert("Agendamento cancelado com sucesso!");
+            fecharModalCancelar();
+        } else {
+            alert("Nenhum agendamento encontrado para este número.");
+        }
+    } catch (erro) {
+        console.error("Erro ao cancelar:", erro);
+        alert("Erro de conexão com o servidor.");
+    }
+}
+
+// Inicializa a página
+carregarServicos();
+bloquearDiasPassados();
